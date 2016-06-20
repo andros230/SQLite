@@ -1,0 +1,73 @@
+package com.andros230.sqlite;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class DBOpenHelper extends SQLiteOpenHelper {
+    private String TAG = "DBOpneHelper";
+    private static final String TABLE_NAME = "bmob.db";
+    private DBOpenHelper openHelper;
+
+    public DBOpenHelper(Context context) {
+        super(context, TABLE_NAME, null, 1);
+        openHelper = new DBOpenHelper(context);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+        String sql = "CREATE TABLE " + TABLE_NAME + " (id INTEGER primary key autoincrement, mac text, lat text, log text);";
+        sqLiteDatabase.execSQL(sql);
+        Log.d(TAG, "创建数据库");
+    }
+
+
+    //增加操作
+    public long insert() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put("mac", "aaa3");
+        cv.put("lat", "lat2223");
+        cv.put("log", "log2232");
+        long row = db.insert(TABLE_NAME, null, cv);
+        Log.d(TAG, "增加数据" + row);
+        return row;
+    }
+
+    public void search() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            String sql = "select * from " + TABLE_NAME;
+            Cursor cur = db.rawQuery(sql, new String[]{});
+            while (cur.moveToNext()) {
+                Log.d(TAG, cur.getString(0));
+                Log.d(TAG, cur.getString(1));
+                Log.d(TAG, cur.getString(2));
+                Log.d(TAG, cur.getString(3));
+            }
+            cur.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //删除操作
+    public void delete(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String where = BOOK_ID + " = ?";
+        String[] whereValue = {Integer.toString(id)};
+        db.delete(TABLE_NAME, where, whereValue);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+
+    }
+}
